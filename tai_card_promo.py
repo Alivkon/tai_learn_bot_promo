@@ -20,7 +20,9 @@ async def start(message: types.Message):
     #print("print3")
     img_path = image_file
 
-    caption = "Привет!\nЯ бот для изучения тайского языка. \nВ платной версии ты найдёшь больше вопросов, звуков и ассоциативных картинок. \nПереходи на @SiamSiam_bot."
+    caption = "Привет!\nЯ бот для изучения тайского языка. \n\
+    В платной версии ты найдёшь больше вопросов, звуков и ассоциативных картинок. \n\
+    Переходи на @SiamSiam_bot."
      # Отправляем изображение с описанием обратно пользователю
     with open(img_path, "rb") as photo:
         await bot.send_photo(message.chat.id, photo=photo, caption=caption)   
@@ -46,8 +48,7 @@ async def handle_next_question(message: types.Message):
         num, tai, transkript, translate, butn1, butn2, butn3, butn4 = row
         conn.commit()
         print("translate= ", translate)
-    #    print("tai= ", tai)
-        # Создаем клавиатуру с 4 кнопками
+           # Создаем клавиатуру с 4 кнопками
         keyboard = types.InlineKeyboardMarkup(row_width=2)
         button_word1 = types.InlineKeyboardButton(
             text=butn1, callback_data=f"compare_{translate}_{butn1}"
@@ -62,25 +63,17 @@ async def handle_next_question(message: types.Message):
         button_word4 = types.InlineKeyboardButton(
             text=str(butn4), callback_data= "compare_" + str(translate) + "_" + str(butn4)
         )
-        #print("print1")
-        # Добавляем кнопки на клавиатуру
         keyboard.add(button_word1, button_word2, button_word3, button_word4)
-        #print("print2")
         image_file = Path("img", str(numask) + ".jpg")
-        #print("print3")
         img_path = image_file
-
         with open(img_path, "rb") as photo:
             await bot.send_photo(chat_id=message.chat.id, photo=photo)
         with open(Path("sound", str(numask) + ".ogg"), "rb") as audio:
             await bot.send_audio(chat_id=message.chat.id, audio=audio)
-        #print("print4")
-        #print("num = ", num)
         await message.answer(
             f"{numask}  Выберите правильный перевод:\n  {tai} \n {transkript}",
             reply_markup=keyboard,
         )
-        #print("print5")
     else:
         await message.answer("Извините, в базе нет такой строки, наберите /start ")
         #print("print6 /n")
